@@ -25,10 +25,6 @@ resource "null_resource" "this" {
     pet = var.pet
     always = uuid()
   }
-
-  provisioner "local-exec" {
-    command = "sleep 30"
-  }
 }
 
 output "ids" {
