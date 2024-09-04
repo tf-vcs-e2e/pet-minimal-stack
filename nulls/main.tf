@@ -23,6 +23,11 @@ resource "null_resource" "this" {
 
   triggers = {
     pet = var.pet
+    always = uuid()
+  }
+
+  provisioner "local-exec" {
+    command = "sleep 30"
   }
 }
 
