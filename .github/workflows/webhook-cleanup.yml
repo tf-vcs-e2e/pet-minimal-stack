@@ -2,6 +2,10 @@
 name: webhook-cleanup
 on:
   workflow_dispatch:
+  workflow_call:
+    secrets:
+      GH_WEBHOOK_TOKEN:
+        required: true
   schedule:
     - cron: 0 0 * * SAT
 
@@ -9,9 +13,6 @@ jobs:
   fetch_webhooks:
     runs-on: ubuntu-latest
     # NOTE: Needs to be able to fetch existing webhook registrations and remove them
-    permissions:
-      contents: read
-      administration: write
     outputs:
       webhook_ids: ${{ steps.format.outputs.webhook_ids }}
 
@@ -21,7 +22,7 @@ jobs:
         with:
           route: GET /repos/${{ github.repository }}/hooks
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_WEBHOOK_TOKEN }}
       - id: format
         run: |
           echo "webhook_ids=$(jq -n '${{ steps.request.outputs.data }}' | jq -rc '[.[] .id]')\n" >> $GITHUB_OUTPUT
@@ -41,4 +42,4 @@ jobs:
         with:
           route: DELETE /repos/${{ github.repository }}/hooks/${{ matrix.value }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+          GITHUB_TOKEN: ${{ secrets.GITHUB_WEBHOOK_TOKEN }}
