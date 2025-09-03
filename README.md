@@ -9,7 +9,7 @@ resources. The purpose is a no-authentication, state-only test of the stacks con
 tokens are defined for OIDC authentication, no real infrastructure is provisioned, no cost will be
 incurred.
 
-_We do not recommend using this example within production accounts._
+_We do not recommend using this example within production accounts._ 
 
 ## Usage
 
