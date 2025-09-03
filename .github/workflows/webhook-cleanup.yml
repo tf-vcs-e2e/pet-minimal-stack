@@ -9,7 +9,7 @@ jobs:
   fetch_webhooks:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       administration: write
     outputs:
       webhook_ids: ${{ steps.format.outputs.webhook_ids }}
