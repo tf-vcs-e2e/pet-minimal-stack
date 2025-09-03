@@ -25,8 +25,7 @@ jobs:
         run: |
           echo "webhook_ids=$(jq -n '${{ steps.request.outputs.data }}' | jq -rc '[.[] .id]')\n" >> $GITHUB_OUTPUT
       - run: |
-          echo 'Deleting these webhook ids: ${{ steps.format.outputs.webhook_ids }}'
-
+          echo 'Deleting the following webhook ids: ${{ steps.format.outputs.webhook_ids }}'
 
   delete_webhooks:
     if: fromJSON(needs.fetch_webhooks.outputs.webhook_ids)[0] != null
