@@ -8,6 +8,7 @@ on:
 jobs:
   fetch_webhooks:
     runs-on: ubuntu-latest
+    # NOTE: Needs to be able to fetch existing webhook registrations and remove them
     permissions:
       contents: read
       administration: write
