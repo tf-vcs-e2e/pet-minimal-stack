@@ -1,0 +1,45 @@
+---
+name: webhook-cleanup
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * SAT
+
+jobs:
+  fetch_webhooks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      administration: write
+    outputs:
+      webhook_ids: ${{ steps.format.outputs.webhook_ids }}
+
+    steps:
+      - uses: octokit/request-action@v2.x
+        id: request
+        with:
+          route: GET /repos/${{ github.repository }}/hooks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - id: format
+        run: |
+          echo "webhook_ids=$(jq -n '${{ steps.request.outputs.data }}' | jq -rc '[.[] .id]')\n" >> $GITHUB_OUTPUT
+      - run: |
+          echo 'Deleting these webhook ids: ${{ steps.format.outputs.webhook_ids }}'
+
+
+  delete_webhooks:
+    if: fromJSON(needs.fetch_webhooks.outputs.webhook_ids)[0] != null
+    runs-on: ubuntu-latest
+    needs:
+      - fetch_webhooks
+    strategy:
+      matrix:
+        value: ${{ fromJSON(needs.fetch_webhooks.outputs.webhook_ids) }}
+    steps:
+      - uses: octokit/request-action@v2.x
+        id: delete_webhook
+        with:
+          route: DELETE /repos/${{ github.repository }}/hooks/${{ matrix.value }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
