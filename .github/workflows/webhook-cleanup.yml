@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   workflow_call:
     secrets:
-      GH_WEBHOOK_TOKEN:
+      WEBHOOK_TOKEN:
         required: true
   schedule:
     - cron: 0 0 * * SAT
@@ -22,7 +22,7 @@ jobs:
         with:
           route: GET /repos/${{ github.repository }}/hooks
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_WEBHOOK_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
       - id: format
         run: |
           echo "webhook_ids=$(jq -n '${{ steps.request.outputs.data }}' | jq -rc '[.[] .id]')\n" >> $GITHUB_OUTPUT
@@ -42,4 +42,4 @@ jobs:
         with:
           route: DELETE /repos/${{ github.repository }}/hooks/${{ matrix.value }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_WEBHOOK_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
