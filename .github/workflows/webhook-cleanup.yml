@@ -7,7 +7,7 @@ on:
       WEBHOOK_TOKEN:
         required: true
   schedule:
-    - cron: 0 0 * * SAT
+    - cron: '0 * * * *'
 
 jobs:
   fetch_webhooks:
